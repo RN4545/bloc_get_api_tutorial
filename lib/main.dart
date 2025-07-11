@@ -16,6 +16,8 @@ class MyApp extends StatelessWidget {
       create: (_) => PostBloc(),
       child: MaterialApp(
         title: "POST THROUGH API",
+        themeMode: ThemeMode.dark,
+        darkTheme: ThemeData.dark(),
         theme: ThemeData(
             useMaterial3: true,
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue)

@@ -26,6 +26,7 @@ class PostRepository {
     on SocketException {
       throw Exception("Something went wrong");
     }
+
     throw Exception("Something went wrrong");
   }
 }

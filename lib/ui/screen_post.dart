@@ -34,8 +34,6 @@ class _ScreenPostState extends State<ScreenPost> {
     );
   }
 
-
-
   Widget _postScreen() {
     return BlocBuilder<PostBloc, PostStates>(
       builder: (context, state) {
@@ -43,20 +41,55 @@ class _ScreenPostState extends State<ScreenPost> {
           case PostStatus.loading:
             return const CircularProgressIndicator();
           case PostStatus.success:
-            return ListView.builder(
-              shrinkWrap: true,
-              itemCount: state.postList.length,
-              itemBuilder: (context, index) {
-                final item = state.postList[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.blue.shade200,
-                     child: Text(item.id.toString()),
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                        hintText: "Search with email",
+                        border: OutlineInputBorder()),
+                    onChanged: (filterKey) {
+                      context.read<PostBloc>().add(SearchItem(filterKey));
+                    },
                   ),
-                  title: Text(item.email.toString()),
-                  subtitle: Text(item.body.toString()),
-                );
-              },
+                ),
+                Expanded(
+                  child: state.searchMessage.isNotEmpty
+                      ? Center(
+                          child: Text(state.searchMessage.toString()),
+                        )
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: state.tempPostList.isEmpty
+                              ? state.postList.length
+                              : state.tempPostList.length,
+                          itemBuilder: (context, index) {
+                            if (state.tempPostList.isNotEmpty) {
+                              final item = state.tempPostList[index];
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.blue.shade200,
+                                  child: Text(item.id.toString()),
+                                ),
+                                title: Text(item.email.toString()),
+                                subtitle: Text(item.body.toString()),
+                              );
+                            } else {
+                              final item = state.postList[index];
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: Colors.blue.shade200,
+                                  child: Text(item.id.toString()),
+                                ),
+                                title: Text(item.email.toString()),
+                                subtitle: Text(item.body.toString()),
+                              );
+                            }
+                          },
+                        ),
+                ),
+              ],
             );
           case PostStatus.failure:
             return Text(state.message.toString());
